@@ -112,15 +112,23 @@ class Scoreboard:
 
         self.players = players
         self.num_players = len(players)
-        self.curr_player_index = 0
+        self.curr_player_index = -1
+
+    def next_turn(self):
+
+        self.next_player()
+
+        self.begin_turn()
 
     def next_player(self):
 
         if self.curr_player_index + 1 > self.num_players - 1:
             self.curr_player_index = 0
-            print("It's {}'s turn!".format(self.players[self.curr_player_index].name))
         else:
             self.curr_player_index += 1
+
+
+    def begin_turn(self):
             print("It's {}'s turn!".format(self.players[self.curr_player_index].name))
 
 
@@ -142,8 +150,7 @@ class Scoreboard:
         try:
             in_file = open("savegame.sav")
         except FileNotFoundError:
-            print("There is no savegame.")
-            return
+            return False
 
         self.curr_player_index = int(in_file.readline())
         self.num_players = int(in_file.readline())
@@ -157,6 +164,8 @@ class Scoreboard:
                 player.combos[combo_index] = int(in_file.readline())
 
             self.players.append(player)
+
+        return True
 
 
     def __str__(self):
@@ -198,14 +207,17 @@ def main():
         player_name = get_string("Input player {}'s name: ".format(i+1), 10)
         players.append(Player(player_name))
 
-
+    board = Scoreboard(players)
     if num_players == 0:
-        board = Scoreboard.load_game(Scoreboard([]))
-    else:
-        board = Scoreboard(players)
+        succeeded = board.load_game()
+        if not succeeded:
+            print("There is no savegame. The game will now quit")
+            exit()
 
     last_roll = []
     num_rolls = 0
+
+    board.begin_turn()
 
     while True:
         params = get_command(': ', last_roll, num_rolls, board)
@@ -228,14 +240,14 @@ def main():
             board.set(command, score)
             num_rolls = 0
             last_roll = []
-            board.next_player()
+            board.next_turn()
 
         elif command == 'block':
             combo = args[0]
             board.set(combo, "Blocked")
             num_rolls = 0
             last_roll = []
-            board.next_player()
+            board.next_turn()
 
         elif command == 'print':
             board.display()
@@ -247,6 +259,10 @@ def main():
         elif command == 'load':
             board.load_game()
             print("Loaded a game save.")
+
+        elif command == 'help':
+            parameter = args[0]
+            print(templates.HELP_PARAMETERS[parameter])
 
         elif command == 'exit':
             y_or_n = input("Save game? (y/n): ")
@@ -377,6 +393,19 @@ def check_valid_keep(kept_dice, rolled_dice):
         return False
     return True
 
+def check_valid_help(help_parameters):
+
+    if len(help_parameters) > 1:
+        return False
+
+    if len(help_parameters) == 0:
+        return True
+
+    if help_parameters[0] in templates.HELP_PARAMETERS:
+        return True
+
+    return False
+
 
 def roll_dice(dice=[]):
     dice = list(dice) # prevents mutability shit. maybe I should be using tuples?
@@ -470,6 +499,18 @@ def get_command(prompt, last_roll, num_rolls, board):
         if not check_valid_combo(combo, last_roll):
             print("You cannot use this combo.")
             return get_command(prompt, last_roll, num_rolls, board)
+
+    if params[0] == 'help':
+
+        if not check_valid_help(params[1:]):
+            #gets the valid help parameters except the blank one
+            valid_params = sorted(templates.HELP_PARAMETERS.keys())[1:]
+
+            print("Invalid help parameter. Use one of: (blank)", *valid_params, sep=', ')
+            return get_command(prompt, last_roll, num_rolls, board)
+
+        if len(params[1:]) == 0:
+            params.append('')
 
     return params
 
