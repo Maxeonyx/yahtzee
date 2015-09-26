@@ -1,3 +1,34 @@
+"""
+contains most of the game's data.
+
+This includes:
+
+HELP_TEXT : string :the default help text
+HELP_TEXT_RULES : string : the help text dealing with rules
+HELP_TEXT_COMMANDS : string : the help text dealing with commands
+
+HELP_PARAMETERS : dictionary : maps help command arguments to their help text.
+
+DICE_ONE - DICE_SIX : string : templates for the dice
+
+DICE_DICT : maps the integer values 1 - 6 to dice templates
+
+UPPER_COMBO_COMMANDS : set : a set of the valid combo commands for the upper
+                             section
+LOWER_COMBO_COMMANDS : set : a set of the valid combo commands for the lower
+                             section
+COMBO_COMMANDS : set : a set of all valid combo commands
+
+OTHER_COMMANDS : set : a set of the commands that are not combo commands
+
+COMMANDS : set : a set of all valid commands
+
+COMBO_INDICES : dictionary : maps valid combo name to corresponding indices in
+                             the player's internal list
+
+SCOREBOARD : string : The template for the scoreboard
+"""
+
 HELP_TEXT = """
 Type "help commands" for command help.
 Type "help rules" for the rules of yahtzee.
