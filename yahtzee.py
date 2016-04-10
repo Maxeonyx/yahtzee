@@ -11,6 +11,7 @@ import random
 from scoreboard import Scoreboard
 from player import Player
 
+
 def main():
     """
     the main function. The game logic begins here.
@@ -222,10 +223,12 @@ def check_valid_keep(kept_dice, rolled_dice):
         return False
     return True
 
+
 def check_valid_help(help_parameters):
     """
-    takes a list of parameters give after the 'help' command and true if they
-    are valid, else returns false
+
+    :param help_parameters: a list of strings given with the 'help' command
+    :return: True if the
     """
     if len(help_parameters) > 1:
         return False
@@ -250,12 +253,10 @@ def roll_dice(dice):
     """
     dice = list(dice) # prevents mutability shit. maybe I should be using tuples?
 
-    rand = random.Random()
-
     num_to_roll = max(0, 5-len(dice))
 
     for _ in range(num_to_roll):
-        new_die = rand.randint(1, 6)
+        new_die = random.randint(1, 6)
         dice.append(new_die)
 
     dice.sort()
@@ -286,7 +287,7 @@ def get_command(prompt, last_roll, num_rolls, board):
     It takes a prompt, the last roll, the number of times the current player has
     rolled, and returns a 100% valid command. That's all you need to know.
 
-    The return value is a list. the first value is a string, the command name,
+    The return value is a list. the first value is the command name,
     and the remaining values are valid parameters for that command.
 
     e.g. for the keep command, a valid return value from this function might be:
@@ -392,6 +393,9 @@ def get_string(prompt=': ', maxsize=-1):
     """
     gets a valid string from the player. optional: take a maximum length for that
     string.
+    :param prompt: a string to present to the user when taking input
+    :param maxsize: prevent the user from entering strings more than a certain character length
+    :return: the string obtained from the user
     """
     failed = True
     while failed:
@@ -400,6 +404,7 @@ def get_string(prompt=': ', maxsize=-1):
             failed = False
         else:
             print("Please input a valid string less than {} chars long".format(maxsize))
+
     return string
 
 
