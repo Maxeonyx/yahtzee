@@ -297,8 +297,8 @@ def get_command(prompt, last_roll, num_rolls, board):
         If this function returns it, you can assume to be valid.
     """
     params = input(prompt).strip().split()
-
-    while not params[0] in templates.COMMANDS:
+        
+    while len(params) == 0 or params[0] not in templates.COMMANDS:
         print("Please enter a valid command.")
         return get_command(prompt, last_roll, num_rolls, board)
 
